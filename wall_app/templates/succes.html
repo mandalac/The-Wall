@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wall page</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+</head>
+
+<body>
+    <div id='container'>
+        <div id='text'>
+            <h1> Coding Dojo Wall</h1>
+            <h1> Welcome,{{request.session.user_firstName}}!</h1>
+        </div>
+        <div id='button'>
+            <a href='/logout'>Log Out</a>
+        </div>
+    </div>
+    {% for message in messages %}
+    {{message}}
+    {% endfor %}
+    <div id="add_message">
+        <form action='/add_a_message' method='POST'>
+            {% csrf_token %}
+            <p>Post a message: </p><br />
+            <textarea cols='62' rows='6' name='message'></textarea><br />
+            <input type='submit' value='Post a Message'>
+        </form>
+    </div>
+    <div id="message/comment_table">
+        {% for mess in message%}
+        <h1>{{mess.uploader.first_name}} {{mess.uploader.last_name}} - {{mess.created_at}}</h1>
+        <h2>{{mess.message}}</h2>
+        <div id="comment">
+            <ul>
+                {% for comm in mess.message_comments.all %}
+                <h3>{{comm.uploader.first_name}} {{comm.uploader.last_name}} - {{comm.created_at}}</h3>
+                <p>{{comm.comment}}</p>
+                {% endfor %}
+            </ul>
+        </div>
+        <form action='/add_a_comment/{{mess.id}}' method='POST'>
+            {% csrf_token %}
+            <p>Post a comment: </p><br />
+            <textarea cols='62' rows='6' name='comment'></textarea><br />
+            <input type='submit' value='Post a Comment'>
+        </form>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
